@@ -1,0 +1,1732 @@
+ 
+Testing:
+ -To ensure the quality of software.
+
+Bug:
+ -if you have bug,software may not run.
+
+Not met exceptation:
+ -Actual output - result
+ -Expected  - Client /Stock holder / biz req
+
+if actual not met expected - then it is also quality problem.
+
+How to verify the acutal and expectation?
+
+ Unit Testing
+ Functional Testing - E 2 E
+
+Unit Testing is sometimes called isloated testing.
+It is the practice of testing small isloated pieces of code.
+..............................................................................................
+Types of Unit Testing
+
+1.TDD  - Test driven development
+2.BDD  - Behaviour driven developement -
+   write tests more readable.
+ DSL based testing.
+
+if a is not less than b then fail
+............................................................................................
+				Java script and unit Testing
+............................................................................................
+
+Javascript Testing components:
+
+1.Assertions
+    verfication expecatation and actuals
+2.Testruntime
+    to run testing code
+
+Assertions :
+ node.js -assertions module as part of node.
+
+ browser applications - frameworks and libs.
+
+core assertion libs:
+
+1.chai.js
+    -should.js
+    -expect.js
+
+Core Test Runtime:
+
+1.mocha.js 
+............................................................................................
+Angular : 
+
+   Jasmine - Assertion lib and test runtime created for angular framework.
+   Karama  -  Test Runtime.
+
+Angular Testing stack:
+-Jasmine
+-karama
+.............
+
+-TestBed - 
+   Mini framwork for writing and running test code in angualar.
+   Angular di framework ,modular framework
+..............................................................................................
+Angualr objects
+1.service
+2.component
+3.directive
+4.pipe
+5.pojo objects
+
+
+basic unit testing blocking:
+............................
+
+describe() - function
+  Test suit
+Collection of test cases and sub suit
+
+describe('A suit  for testing login process',function(){
+    
+ var a;
+   it('user name is not null test case',function(){
+    a=true
+        //verfication on expected and acutal
+       expect(a).toBe(true) //
+   })
+
+   it('user name is not null test case',function(){
+         //verfication on expected and acutal
+   })
+
+})
+
+Test case gives result : boolean result
+
+-true
+  if expected and actual is ok - Test passed   
+-false
+  if expected and actual is not ok  -Test failed.
+
+Until test pass , you have to recursivly test.
+
+Scenerios for testing:
+
+-Possitive
+  if a value should be true
+
+-Negative
+  if a value should not be false
+ 
+
+//basic testSuit
+describe('My first suit', function () {
+    let a;
+    it('it should be possitive', () => {
+        a = true;
+        //assert
+       expect(a).toBe(true)
+    });
+    it('it should not be possitive', () => {
+        a = false;
+        //assert
+       expect(a).not.toBe(true);
+    });
+});
+..........
+Testing biz functionity
+
+//biz api how to test 
+function helloWorld() {
+    return 'Hi world!';
+}
+describe('Hello world', () => {
+    it('says hello', () => {
+        expect(helloWorld()).toEqual('Hello world!');
+    });
+});
+
+Jasmine built in matchers:
+
+expect(array).toContain(member);
+expect(fn).toThrow(string);
+expect(fn).toThrowError(string);
+expect(instance).toBe(instance);
+expect(mixed).toBeDefined();
+expect(mixed).toBeFalsy();
+expect(mixed).toBeNull();
+expect(mixed).toBeTruthy();
+expect(mixed).toBeUndefined();
+expect(mixed).toEqual(mixed);
+expect(mixed).toMatch(pattern);
+expect(number).toBeCloseTo(number, decimalPlaces);
+expect(number).toBeGreaterThan(number);
+expect(number).toBeLessThan(number);
+expect(number).toBeNaN();
+expect(spy).toHaveBeenCalled();
+expect(spy).toHaveBeenCalledTimes(number);
+expect(spy).toHaveBeenCalledWith(...arguments);
+..............................................................................................
+
+Life cycle methods:
+ methods called before and after test suit, test case.
+
+before:
+  for initalizing resource
+after
+  for clean up resources
+
+Setup and Teardown
+
+Sometimes in order to test a feature we need to perform some setup, perhaps it's creating some test objects. Also we may need to perform some cleanup activities after we have finished testing, perhaps we need to delete some files from the hard drive.
+
+These activities are called _setup_ and _teardown_ (for cleaning up) and Jasmine has a few functions we can use to make this easier:
+
+beforeAll:: This function is called *once*, _before_ all the specs in a test suite (`describe` function) are run.
+
+afterAll:: This function is called *once* _after_ all the specs in a test suite are finished.
+
+beforeEach:: This function is called _before_ *each* test specification (`it` function) is run.
+
+afterEach:: This function is called _after_ *each* test specification is run.
+
+
+function helloWorld1() {
+    return 'Hello World';
+}
+
+describe('Hello world', () => {
+
+    let expected = "";
+
+    beforeAll(() => {
+        console.log('Hello world init')
+    });
+
+    beforeEach(() => {
+        expected = "Hello World";
+    });
+
+    afterEach(() => {
+        expected = "";
+    });
+
+    it('says hello', () => {
+        expect(helloWorld1())
+            .toEqual(expected);
+    });
+
+    afterAll(() => {
+        console.log('Hello world destroy')
+    });
+});
+..............................................................................................
+
+Test classes and its apis:
+..........................
+
+Everything in Angular is an instance of a class, be it a Component, Directive, Pipe and so on. So once you know how to test a basic class you can test everything.
+
+Let's imagine we have a simple class called `AuthService` it's something we want to provide to Angulars DI framework but that doesn't play a part in how we want to test it.
+
+
+export class AuthService {
+  isAuthenticated(): boolean {
+    return !!localStorage.getItem('token');
+  }
+}
+
+
+It has one function called `isAuthenticated` which returns `true` if there is a token stored in the browsers `localStorage`.
+
+To test this class we create a test file called `auth.service.spec.ts` that sits next to our `auth.service.ts` file, like so:
+
+import { AuthService } from './auth.service';
+
+describe('Service: Auth', () => {
+    let service: AuthService | null;
+
+    //create new AuthService instance for each each
+    beforeEach(() => {
+        service = new AuthService();
+    });
+    //release the object when ever test case finished
+    afterEach(() => {
+        service = null;
+        localStorage.removeItem('token');
+    });
+    //possitive 
+    it('should return true from isAuthenticated when there is a token', () => {
+        localStorage.setItem('token','1234');
+        expect(service?.isAuthenticated()).toBeTruthy()
+    });
+    //negative
+    it('should return false from isAuthenticated when there is no token', () => {
+        expect(service?.isAuthenticated()).toBeFalsy();
+    });
+
+});
+...........................................................................................
+				  Testing Pipes
+...........................................................................................
+
+Pipes are by far the simplest part of Angular, they can be implemented as a class with one function and therefore can be tested with _just_ Jasmine and the knowledge we've gained so far.
+
+import { Pipe, PipeTransform } from '@angular/core';
+
+@Pipe({
+    name: 'default'
+})
+export class DefaultPipe implements PipeTransform {
+
+    transform(value: string, fallback: string, forceHttps: boolean = false): string {
+        let image = "";
+        if (value) {
+            image = value;
+        } else {
+            image = fallback;
+        }
+        if (forceHttps) {
+            if (image.indexOf("https") == -1) {
+                image = image.replace("http", "https");
+            }
+        }
+        return image;
+    }
+}
+
+describe('Pipe: Default', () => {
+  let pipe: DefaultPipe;
+
+  beforeEach(() => {
+    pipe = new DefaultPipe();
+  });
+});
+----
+
+In our setup function we create an instance of our pipe class.
+
+Pipe classes have one function called `transform` so in order to test pipes we just need to test this one function, passing inputs and expecting outputs.
+
+Our first test spec checks to see that if the pipe doesn't recieve an input it returns the default value, like so:
+
+ it('providing no value returns fallback', () => {
+        let fallbackUrl='http://place-hold.it/300';
+
+        expect(pipe.transform('', fallbackUrl)).toBe(fallbackUrl);
+    });
+
+We pass in empty string as the input to the transform function and therefore it returns the second argument back to us.
+
+For testing pipes there isn't much else to it, we simply check the various inputs and expected ouputs of our transform function.
+
+
+import { DefaultPipe } from './transform.pipe';
+
+describe('Pipe: Default', () => {
+    let pipe: DefaultPipe;
+
+    beforeEach(() => {
+        pipe = new DefaultPipe();
+    });
+
+    //use case 1
+    it('providing no value returns fallback', () => {
+        let fallbackUrl = 'http://place-hold.it/300';
+        expect(pipe.transform('', fallbackUrl)).toBe(fallbackUrl);
+    });
+    //use case 2
+    it('providing a value returns value', () => {
+        let url = 'http://place-hold.it/300';
+        expect(pipe.transform(url, 'fallback',)).toBe(url);
+    });
+    //use case 3
+    it('asking for https returns https',()=>{
+        let url = 'http://place-hold.it/300';
+        expect(pipe.transform(url, 'fallback',true)).toBe('https://place-hold.it/300');
+
+    });
+    
+
+});
+............................................................................................
+			Mocks and spies : How to test dependencies in isloation
+............................................................................................
+
+What is mock?
+ mock means fake object.
+when we test dependency.
+
+How to test dependency?
+
+* How to _Mock_ with fake classes.
+* How to _Mock_ by extending classes and overriding functions.
+* How to _Mock_ by using a real instance and a _Spy_.
+
+
+Let's imagine we have a `LoginComponent` which works _with_ the `AuthService` we tested in the previous lecture, like so:
+import {Component} from '@angular/core';
+import {AuthService} from "./auth.service";
+
+@Component({
+  selector: 'app-login',
+  template: `<a [hidden]="needsLogin()">Login</a>`
+})
+export class LoginComponent {
+
+  constructor(private auth: AuthService) {
+  }
+
+  needsLogin() {
+    return !this.auth.isAuthenticated();
+  }
+}
+
+We inject the `AuthService` into the `LoginComponent` and the component shows a _Login_ button if the `AuthService` says the user isn't _authenticated_.
+
+How to test Login Component with Real AuthService Class.
+
+Testing with the Real `AuthService`
+
+We could test the `LoginComponent` by using a real instance of `AuthService` but if you remember to _trick_ `AuthService` into returning `true` for the `isAuthenticated` function we needed to setup some data via `localStorage`.
+
+//domain class
+
+export class AuthService {
+    isAuthenticated(): boolean {
+        return !!localStorage.getItem('token'); // !!1234 - true
+    }
+}
+
+import { LoginComponent } from './login.component';
+import { AuthService } from "./auth.service";
+
+
+//Here we create instances manually.
+
+describe('Component: Login', () => {
+    let component: LoginComponent | null;
+    let service: AuthService | null;
+
+    beforeEach(() => {
+        service = new AuthService();
+        component = new LoginComponent(service);
+    });
+    it('needsLogin returns true when the user has not been authenticated', () => {
+        expect(component?.needsLogin()).toBeTruthy();
+    });
+    it('needsLogin returns false when the user has been authenticated', () => {
+        localStorage.setItem('token', '12345'); 
+        expect(component?.needsLogin()).toBeFalsy();
+      });
+    afterEach(() => {
+        localStorage.removeItem('token');
+        service = null;
+        component = null;
+    });
+});
+
+The above example, where we test login component with real AuthService object. which is not recommended. We need to mock it.
+
+
+Mocking with Fake classes:
+.........................
+
+We can create a fake `AuthService` called `MockedAuthService` which just returns whatever we want for our test.
+
+We can even remove the `AuthService` import if we want, there really is no dependency on anything else. The  `LoginComponent` is tested in isolation:
+
+import { LoginComponent } from './login.component';
+
+//fake class
+class MockAuthService {
+    authenticated = false;
+
+    isAuthenticated() {
+        return this.authenticated;
+    }
+}
+//Here we create instances manually.
+
+describe('Component: Login :Mock classes', () => {
+    let component: LoginComponent | null;
+    let service: MockAuthService;
+
+    beforeEach(() => {
+        service = new MockAuthService();
+        component = new LoginComponent(service);
+    });
+    it('needsLogin returns true when the user has not been authenticated', () => {
+        service.authenticated = false;
+        expect(component?.needsLogin()).toBeTruthy();
+    });
+    it('needsLogin returns false when the user has been authenticated', () => {
+        service.authenticated = true;
+        expect(component?.needsLogin()).toBeFalsy();
+    });
+    afterEach(() => {
+        service = null;
+        component = null;
+    });
+});
+...........................................................................................
+Mocking by overriding functions:
+
+-sometimes creating a complete fake copy of real classes can be complicated; time consuming
+and unncessary.
+
+class MockAuthService extends AuthService {
+    authenticated = false;
+
+    //override method
+    isAuthenticated() {
+        return this.authenticated;
+    }
+}
+
+
+//Here we create instances manually.
+
+describe('Component: Login :Mock classes', () => {
+    let component: LoginComponent | null;
+    let service: MockAuthService;
+
+    beforeEach(() => {
+        service = new MockAuthService();
+        component = new LoginComponent(service);
+    });
+    it('needsLogin returns true when the user has not been authenticated', () => {
+        service.authenticated = false;
+        expect(component?.needsLogin()).toBeTruthy();
+    });
+    it('needsLogin returns false when the user has been authenticated', () => {
+        service.authenticated = true;
+        expect(component?.needsLogin()).toBeFalsy();
+    });
+    afterEach(() => {
+        service = null;
+        component = null;
+    });
+});
+............................................................................................
+Mocking with Spies:
+..................
+
+A Spy is a feature of jasmine which lets us take an existing class,function, or object and mock it in such way that you can control what gets returned from the functions.
+
+ 
+import { AuthService } from './auth.service';
+import { LoginComponent } from './login.component';
+
+//fake class
+// class MockAuthService {
+//     authenticated = false;
+
+//     isAuthenticated() {
+//         return this.authenticated;
+//     }
+// }
+
+class MockAuthService extends AuthService {
+    authenticated = false;
+
+    //override method
+    isAuthenticated() {
+        return this.authenticated;
+    }
+}
+
+
+//Here we create instances manually.
+
+describe('Component: Login :Mock classes', () => {
+    let component: LoginComponent | null;
+    //let service: MockAuthService;
+    let service: AuthService;
+    let spy: any;
+
+    beforeEach(() => {
+        service = new AuthService();
+        component = new LoginComponent(service);
+    });
+    it('needsLogin returns true when the user has not been authenticated', () => {
+        //spy on authservice
+        /**
+         * isAuthenticated(): boolean {
+                 return !!localStorage.getItem('token'); // !!1234 - true
+           }
+         */
+        //invoke function and pass return value to is 
+        spy = spyOn(service, 'isAuthenticated').and.returnValue(false)
+        expect(component.needsLogin()).toBeTruthy();
+        //whether method has been called
+        expect(service.isAuthenticated).toHaveBeenCalled();
+
+    });
+    it('needsLogin returns false when the user has been authenticated', () => {
+        spy = spyOn(service, 'isAuthenticated').and.returnValue(true)
+        expect(component.needsLogin()).toBeFalsy();
+        //whether method has been called
+        expect(service.isAuthenticated).toHaveBeenCalled();
+
+    });
+    afterEach(() => {
+        service = null;
+        component = null;
+    });
+});
+.............................................................................................
+					Test Bed
+............................................................................................
+
+Configures and initializes environment for unit testing and provides methods for creating components and services in unit tests.
+
+The Angular Test Bed (ATB) is a higher level _Angular Only_ testing framework that allows us to easily test behaviours that depend on the Angular Framework.
+
+We still write our tests in Jasmine and run using Karma but we now have a slightly easier way to create components, handle injection, test asynchronous behaviour and interact with our application.
+
+//How to use TestBed
+import { LoginComponent } from './login.component';
+import { AuthService } from './auth.service';
+import { TestBed } from '@angular/core/testing';
+
+
+describe('Component: Login', () => {
+    beforeEach(() => {
+        //Create instance with angular module : mock objects
+        TestBed.configureTestingModule({
+            declarations: [LoginComponent],
+            providers: [AuthService]
+        })
+    });
+});
+..............................................................................................
+Fixtures and Dependency Injection:
+..................................
+
+
+What is fixtures?
+ as a structural part a plumbing fixture : Extracting something from object.
+ 
+//How to use TestBed
+import { LoginComponent } from './login.component';
+import { AuthService } from './auth.service';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+
+
+describe('Component: Login : TestBed', () => {
+
+    let component: LoginComponent;
+    //take Fixture(extract) from the LoginComponent 
+    let fixture: ComponentFixture<LoginComponent>;
+    //service 
+    let service: AuthService;
+
+    beforeEach(() => {
+        //Create instance with angular module : mock objects
+        TestBed.configureTestingModule({
+            declarations: [LoginComponent],
+            providers: [AuthService]
+        })
+        fixture = TestBed.createComponent(LoginComponent);
+        //extract component instance
+        component = fixture.componentInstance;
+
+        //mock service object
+        service = TestBed.inject(AuthService)
+
+    });
+});
+
+Mocking methods and stub it:
+...........................
+
+//How to use TestBed
+import { LoginComponent } from './login.component';
+import { AuthService } from './auth.service';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+
+
+describe('Component: Login : TestBed', () => {
+
+    let component: LoginComponent;
+    //take Fixture(extract) from the LoginComponent 
+    let fixture: ComponentFixture<LoginComponent>;
+    //service 
+    let service: AuthService;
+    let spy: any;
+
+    beforeEach(() => {
+        //Create instance with angular module : mock objects
+        TestBed.configureTestingModule({
+            declarations: [LoginComponent],
+            providers: [AuthService]
+        })
+        fixture = TestBed.createComponent(LoginComponent);
+        //extract component instance
+        component = fixture.componentInstance;
+
+        //mock service object
+        service = TestBed.inject(AuthService)
+
+    });
+    it('needsLogin returns true when the user has not been authenticated', () => {
+        spy = spyOn(service, 'isAuthenticated').and.returnValue(false)
+        expect(component.needsLogin()).toBeTruthy();
+        //whether method has been called
+        expect(service.isAuthenticated).toHaveBeenCalled();
+
+    });
+    it('needsLogin returns false when the user has been authenticated', () => {
+        spy = spyOn(service, 'isAuthenticated').and.returnValue(true)
+        expect(component.needsLogin()).toBeFalsy();
+        //whether method has been called
+        expect(service.isAuthenticated).toHaveBeenCalled();
+
+    });
+});
+..............................................................................................
+				UI Testing - DOM Element Testing
+...........................................................................................
+
+How to Test component templates(ui components) ?
+
+How to inspect a compoent views?
+
+How to trigger change dectection so component views updates based on state changes in application.
+
+  it('login button hidden when the user is authenticated', () => {
+        expect(element.nativeElement.textContent.trim()).toBe('');
+    });
+
+
+We initially _expect_ the text inside the `a` tag to be _blank_.
+
+That's because when Angular first loads no change detection has been triggered and therefore the view doesn't show either the `Login` or `Logout` text.
+
+`fixture` is a wrapper for our component's environment so we can control things like change detection.
+
+To trigger change detection we call the function `fixture.detectChanges()`, now we can update our test spec to:
+
+
+import { LoginComponent } from './login.state.component';
+
+import { AuthService } from "./auth.service";
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { DebugElement } from '@angular/core';
+import { By } from '@angular/platform-browser';
+
+describe('Component: Login : TestBed', () => {
+
+    let component: LoginComponent;
+    //take Fixture(extract) from the LoginComponent 
+    let fixture: ComponentFixture<LoginComponent>;
+    //service 
+    let service: AuthService;
+    let spy: any;
+    let element: DebugElement;
+
+    beforeEach(() => {
+        //Create instance with angular module : mock objects
+        TestBed.configureTestingModule({
+            declarations: [LoginComponent],
+            providers: [AuthService]
+        })
+        fixture = TestBed.createComponent(LoginComponent);
+        //extract component instance
+        component = fixture.componentInstance;
+
+        //mock service object
+        service = TestBed.inject(AuthService)
+
+        //Get the element by using css selector syntax
+        element = fixture.debugElement.query(By.css('a'))
+
+    });
+    it('login button hidden when the user is authenticated', () => {
+        expect(element.nativeElement.textContent.trim()).toBe('');
+        //enable change detection,so that dom elements starts triggering
+        fixture.detectChanges();
+        expect(element.nativeElement.textContent.trim()).toBe('Login');
+        spyOn(service, 'isAuthenticated').and.returnValue(true);
+        expect(element.nativeElement.textContent.trim()).toBe('Login');
+
+    });
+    it('login button hidden when the user is authenticated', () => {
+        expect(element.nativeElement.textContent.trim()).toBe('');
+        fixture.detectChanges();
+        expect(element.nativeElement.textContent.trim()).toBe('Login');
+        spyOn(service, 'isAuthenticated').and.returnValue(true);
+        expect(element.nativeElement.textContent.trim()).toBe('Login');
+        fixture.detectChanges();
+        expect(element.nativeElement.textContent.trim()).toBe('Logout');
+    });
+});
+.............................................................................................
+				 Async Test - Rxjs Observables,Promises,Callbacks
+............................................................................................
+
+What is async code?
+  The code which does not stop the current thread being executed next line of statement in program.
+
+How to implement async code? Async style of code?
+
+1.callback style
+2.Promise style
+3.async..await = Promise thenables replacement.
+
+Reactive Extensions - Rxjs:
+..........................
+ Reactive is a programming model where programs responds based on events. event driven model.
+ Using this model, we can stream data,observe data,process(transformation,filtering).
+ Streaming and processing can be done in async way- Reactive programming is async and streaming.
+
+Rxjs is lib developed to build reactive programming in javascript.
+Angular adopted this lib, for data streaming and processing in async way.
+
+Rxjs provides Objects in order to create publisher and stream and subscriber
+
+1.Observable
+2.Subject
+3.BehaviourSubject,AsyncSubject
+
+
+export class AuthService {
+  isAuthenticated(): Promise<boolean> {
+    return Promise.resolve(!!localStorage.getItem('token'));
+  }
+}
+
+Differentways you can test async code:
+
+Promises:
+ Jamsimine provides api for 
+
+-done function
+-async and whenStable
+-fakeAsync and tick
+
+......
+
+Use case : Testing Promises
+
+import { AuthService } from "./auth.service";
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { DebugElement } from '@angular/core';
+import { By } from '@angular/platform-browser';
+import { LoginComponent } from "./login.component";
+
+describe('Component: Login : TestBed', () => {
+
+    let component: LoginComponent;
+    //take Fixture(extract) from the LoginComponent 
+    let fixture: ComponentFixture<LoginComponent>;
+    //service 
+    let service: AuthService;
+    let spy: any;
+    let element: DebugElement;
+
+    beforeEach(() => {
+        //Create instance with angular module : mock objects
+        TestBed.configureTestingModule({
+            declarations: [LoginComponent],
+            providers: [AuthService]
+        })
+        fixture = TestBed.createComponent(LoginComponent);
+        //extract component instance
+        component = fixture.componentInstance;
+
+        //mock service object
+        service = TestBed.inject(AuthService)
+
+        //Get the element by using css selector syntax
+        element = fixture.debugElement.query(By.css('a'))
+
+    });
+    it('login button change via jasmine.done', () => {
+        fixture.detectChanges();
+        expect(element.nativeElement.textContent.trim()).toBe('Login');
+        spyOn(service,'isAuthenticated').and.returnValue(Promise.resolve(true));
+        component.ngOnInit();
+        fixture.detectChanges();
+        expect(element.nativeElement.textContent.trim()).toBe('Logout')
+
+    });
+
+});
+
+The above code will fail test due to async test failed.
+
+Solution: Jasmine done function.
+
+   it('login button change via jasmine.done', (done: DoneFn) => {
+        fixture.detectChanges();
+        expect(element.nativeElement.textContent.trim()).toBe('Login');
+        //capture the promise
+        let spyPromise = spyOn(service, 'isAuthenticated').and.returnValue(Promise.resolve(true));
+        component.ngOnInit();
+        spyPromise.calls.mostRecent().returnValue.then(() => {
+            fixture.detectChanges();
+            expect(element.nativeElement.textContent.trim()).toBe('Logout')
+            done();
+        })
+    });
+
+FakeAsync and tick
+
+it('Button label via fakeAsync() and tick()', fakeAsync(() => {
+        expect(element.nativeElement.textContent.trim()).toBe('');
+        fixture.detectChanges();
+        expect(element.nativeElement.textContent.trim()).toBe('Login');
+        spyOn(service, 'isAuthenticated').and.returnValue(Promise.resolve(true));
+        component.ngOnInit();
+        //simulate the passage time untill all pending asyn tasks complete
+        tick();
+        fixture.detectChanges();
+        expect(element.nativeElement.textContent.trim()).toBe('Logout');
+    }));
+
+    it('looks async but is synchronous', <any>fakeAsync((): void => {
+        let flag = false;
+        setTimeout(() => {
+          flag = true;
+        }, 100);
+        expect(flag).toBe(false);
+        tick(50);
+        expect(flag).toBe(false);
+        tick(50);
+        expect(flag).toBe(true);
+      }));
+.............................................................................................
+		A spec generator schematic : SCURI-Spec Create Update Read 
+.............................................................................................
+
+in order to generate boiler plate code, angular provides "ng g" command.
+
+What is scuri?
+  -Automated Test lib, which makes testing simpler and more readable.
+
+What SURI Offers?
+
+-boiler plate setup code - init code outside test suite
+-autoSpy - function which helps to simplify creating mock objects.
+
+"After a component has been created it is boring and tedious to do the tests - and we often don't. SCuri* tries to jump-start that by walking the component's constructor, parsing the dependencies and creating mocks for each of them, and then including them in the spec"
+
+
+Setup:
+
+npm install -D scuri
+
+
+
+
+export interface User{
+    userName:string;
+}
+
+import { Inject, Injectable } from "@angular/core";
+import { User } from "./types/user.type";
+
+@Injectable({
+    providedIn: 'root'
+})
+export class UserService {
+    userName!: string;
+
+    //api
+    getUser(id: string): User {
+        return { userName: 'subramaian' };
+    }
+    updateUser(user: User) {
+        return "success";
+    }
+
+}
+import { Component } from "@angular/core";
+import { User } from "./types/user.type";
+import { UserService } from "./user.service";
+
+
+@Component({
+    selector: 'app-user',
+    template: `
+     <h1>User</h1>
+    `
+})
+export class UserComponent {
+    user!: User;
+    constructor(private service: UserService) {
+
+    }
+    ngOnInit() {
+        this.user = this.service.getUser('foo');
+    }
+}
+
+Generate code and add autospy api.
+ng g scuri:spec --name src/app/user.component.ts
+
+
+
+import { UserService } from './user.service';
+import { UserComponent } from './user.component';
+import { autoSpy } from 'auto-spy';
+import { User } from './types/user.type';
+import { MessageService } from './message.service';
+
+describe('UserComponent', () => {
+  it('when ngOnInit is called it should return user' , () => {
+    // arrange
+    const { build, service } = setup().default();
+    const usercompoent = build();
+
+    service.getUser.and.returnValue({ userName: 'subramanian' } as User)
+    // act
+    usercompoent.ngOnInit();
+    // assert
+    expect(usercompoent.user).toEqual({ userName: 'subramanian' })
+  });
+
+  it('When ngonInt is called it should return message',()=>{
+    const { build, messageService } = setup().default();
+    const usercompoent = build();
+    messageService.sayHello.and.returnValue('hello');
+    // act
+    usercompoent.ngOnInit();
+    // assert
+    expect(usercompoent.message).toEqual('hello');
+  });
+
+});
+
+function setup() {
+  const messageService = autoSpy(MessageService);
+  const service = autoSpy(UserService);
+
+  const builder = {
+    messageService,
+    service,
+    default() {
+      return builder;
+    },
+    build() {
+      return new UserComponent(service, messageService);
+    }
+  };
+
+  return builder;
+}
+..............................................................................................
+					Rxjs -Testing
+..............................................................................................
+
+Marbles: 
+ It is diagram to represent  reactive stream flow.
+
+Marbles symbol used to test observables
+
+'--a--': An observable that waits 2 "frames", emits value a on frame 2 and then never completes.
+
+'--a--b--|': On frame 2 emit a, on frame 5 emit b, and on frame 8, complete.
+
+'--a--b--#': On frame 2 emit a, on frame 5 emit b, and on frame 8, error.
+
+'-a-^-b--|': In a hot observable, on frame -2 emit a, then on frame 2 emit b, and on frame 5, complete.
+
+'--(abc)-|': on frame 2 emit a, b, and c, then on frame 8, complete.
+
+'-----(a|)': on frame 5 emit a and complete.
+
+Types of Observables
+
+1.Cold Observable
+2.Hot Observable
+
+Actors in Rx:
+
+1.Publisher  
+   sends/emits events,and data
+2.Subscriber
+   listens for events -  onData,onError,onComplete
+
+Types of communication.
+
+1.unicast communication
+    One publisher --- One Subscriber
+
+2.multi cast communication
+   One Publisher --- Many Subscriber
+
+1.Cold Observable
+ Publisher-----|---s1,s2,s3
+
+2.Hot Observable
+
+import { TestBed } from "@angular/core/testing";
+import { cold, hot } from 'jasmine-marbles';
+import { Observable, of, from, throwError } from 'rxjs'
+import { flatMap } from 'rxjs/operators'
+
+class MyReactiveService {
+    public getValue(): Observable<number> {
+        return of(1, 2, 3);
+    }
+}
+
+describe('Basic Marble Testing', () => {
+
+    it('should demonstrate basic cold stream', () => {
+        //cold ==  of(1,2,3,4)=>Create Observable
+        const source = cold('-x-|');
+        const expected = cold('-x-|');
+        expect(source).toBeObservable(expected);
+    });
+    //
+    it('should demonstrate multicast ', () => {
+        const hotSource = hot('-a-^-b-c|', { a: 10, b: 20, c: 30 });
+        const subscription = '^----!';
+        const coldSource = cold('--x-y|', { x: 20, y: 30 });
+        expect(hotSource).toBeObservable(coldSource);
+        expect(hotSource).toHaveSubscriptions(subscription);
+    })
+    it('should test cold method with of operator', () => {
+        // const ofObs = of(1, 2, 3);
+        const ofObs = new MyReactiveService().getValue();
+
+        const coldObs = cold('(x-y-z|)', { x: 1, y: 2, z: 3 });
+
+        expect(ofObs).toBeObservable(coldObs);
+    });
+
+
+    it('should test error thrown', () => {
+
+        const source = from([1, 2, 3, 4,5]).pipe(
+            flatMap(data => {
+                if (data >= 3) {
+                    return throwError(new Error('Error Occured!'));
+                }
+                return of(data);
+            })
+        );
+        const expected = cold('(-x-y-#)', { x: 1, y: 2 }, new Error('Error Occured!'));
+        expect(source).toBeObservable(expected);
+
+
+    });
+});
+..........................................................................................					 Service which returns Observable
+...........................................................................................
+
+
+Service:
+import { Injectable } from '@angular/core';
+import { Observable, of, interval } from 'rxjs';
+import { take, map } from 'rxjs/operators';
+
+
+@Injectable({
+  providedIn: 'root'
+})
+export class MarbleTestService {
+
+  constructor() { }
+
+  public getProductList():Observable<any> {
+       return of(PRODUCT_LIST );
+  }
+
+}
+
+export const PRODUCT_LIST = [{
+  "title": "Brown eggs",
+  "type": "dairy",
+  "description": "Raw organic brown eggs in a basket",
+  "filename": "0.jpg",
+  "height": 600,
+  "width": 400,
+  "price": 28.1,
+  "rating": 4
+}, {
+  "title": "Sweet fresh stawberry",
+  "type": "fruit",
+  "description": "Sweet fresh stawberry on the wooden table",
+  "filename": "1.jpg",
+  "height": 450,
+  "width": 299,
+  "price": 29.45,
+  "rating": 4
+}, {
+  "title": "Asparagus",
+  "type": "vegetable",
+  "description": "Asparagus with ham on the wooden table",
+  "filename": "2.jpg",
+  "height": 450,
+  "width": 299,
+  "price": 18.95,
+  "rating": 3
+}, {
+  "title": "Green smoothie",
+  "type": "dairy",
+  "description": "Glass of green smoothie with quail egg's yolk, served with cocktail tube, green apple and baby spinach leaves over tin surface.",
+  "filename": "3.jpg",
+  "height": 600,
+  "width": 399,
+  "price": 17.68,
+  "rating": 4
+}, {
+  "title": "Raw legums",
+  "type": "vegetable",
+  "description": "Raw legums on the wooden table",
+  "filename": "4.jpg",
+  "height": 450,
+  "width": 299,
+  "price": 17.11,
+  "rating": 2
+}, {
+  "title": "Baking cake",
+  "type": "dairy",
+  "description": "Baking cake in rural kitchen - dough  recipe ingredients (eggs, flour, sugar) on vintage wooden table from above.",
+  "filename": "5.jpg",
+  "height": 450,
+  "width": 675,
+  "price": 11.14,
+  "rating": 4
+}, {
+  "title": "Pesto with basil",
+  "type": "vegetable",
+  "description": "Italian traditional pesto with basil, chesse and oil",
+  "filename": "6.jpg",
+  "height": 450,
+  "width": 299,
+  "price": 18.19,
+  "rating": 2
+}, {
+  "title": "Hazelnut in black ceramic bowl",
+  "type": "vegetable",
+  "description": "Hazelnut in black ceramic bowl on old wooden background. forest wealth. rustic style. selective focus",
+  "filename": "7.jpg",
+  "height": 450,
+  "width": 301,
+  "price": 27.35,
+  "rating": 0
+}, {
+  "title": "Fresh stawberry",
+  "type": "fruit",
+  "description": "Sweet fresh stawberry on the wooden table",
+  "filename": "8.jpg",
+  "height": 600,
+  "width": 399,
+  "price": 28.59,
+  "rating": 4
+}, {
+  "title": "Lemon and salt",
+  "type": "fruit",
+  "description": "Rosemary, lemon and salt on the table",
+  "filename": "9.jpg",
+  "height": 450,
+  "width": 299,
+  "price": 15.79,
+  "rating": 5
+}, {
+  "title": "Homemade bread",
+  "type": "bakery",
+  "description": "Homemade bread",
+  "filename": "10.jpg",
+  "height": 450,
+  "width": 301,
+  "price": 17.48,
+  "rating": 3
+}, {
+  "title": "Legums",
+  "type": "vegetable",
+  "description": "Cooked legums on the wooden table",
+  "filename": "11.jpg",
+  "height": 600,
+  "width": 399,
+  "price": 14.77,
+  "rating": 0
+}, {
+  "title": "Fresh tomato",
+  "type": "vegetable",
+  "description": "Fresh tomato juice with basil",
+  "filename": "12.jpg",
+  "height": 600,
+  "width": 903,
+  "price": 16.3,
+  "rating": 2
+}, {
+  "title": "Healthy breakfast",
+  "type": "fruit",
+  "description": "Healthy breakfast set. rice cereal or porridge with berries and honey over rustic wood background",
+  "filename": "13.jpg",
+  "height": 450,
+  "width": 350,
+  "price": 13.02,
+  "rating": 2
+}, {
+  "title": "Green beans",
+  "type": "vegetable",
+  "description": "Raw organic green beans ready to eat",
+  "filename": "14.jpg",
+  "height": 450,
+  "width": 300,
+  "price": 28.79,
+  "rating": 1
+}, {
+  "title": "Baked stuffed portabello mushrooms",
+  "type": "bakery",
+  "description": "Homemade baked stuffed portabello mushrooms with spinach and cheese",
+  "filename": "15.jpg",
+  "height": 600,
+  "width": 400,
+  "price": 20.31,
+  "rating": 1
+}, {
+  "title": "Strawberry jelly",
+  "type": "fruit",
+  "description": "Homemade organic strawberry jelly in a jar",
+  "filename": "16.jpg",
+  "height": 400,
+  "width": 600,
+  "price": 14.18,
+  "rating": 1
+}, {
+  "title": "Pears juice",
+  "type": "fruit",
+  "description": "Fresh pears juice on the wooden table",
+  "filename": "17.jpg",
+  "height": 600,
+  "width": 398,
+  "price": 19.49,
+  "rating": 4
+}, {
+  "title": "Fresh pears",
+  "type": "fruit",
+  "description": "Sweet fresh pears on the wooden table",
+  "filename": "18.jpg",
+  "height": 600,
+  "width": 398,
+  "price": 15.12,
+  "rating": 5
+}, {
+  "title": "Caprese salad",
+  "type": "vegetable",
+  "description": "Homemade healthy caprese salad with tomato mozzarella and basil",
+  "filename": "19.jpg",
+  "height": 400,
+  "width": 600,
+  "price": 16.76,
+  "rating": 5
+}, {
+  "title": "Oranges",
+  "type": "fruit",
+  "description": "Orange popsicle ice cream bars made from fresh oranges.  a refreshing summer treat.",
+  "filename": "20.jpg",
+  "height": 450,
+  "width": 274,
+  "price": 21.48,
+  "rating": 4
+}, {
+  "title": "Vegan food",
+  "type": "vegetable",
+  "description": "Concept of vegan food",
+  "filename": "21.jpg",
+  "height": 450,
+  "width": 299,
+  "price": 29.66,
+  "rating": 4
+}, {
+  "title": "Breakfast with muesli",
+  "type": "dairy",
+  "description": "Concept of healthy breakfast with muesli",
+  "filename": "22.jpg",
+  "height": 450,
+  "width": 299,
+  "price": 22.7,
+  "rating": 2
+}, {
+  "title": "Honey",
+  "type": "bakery",
+  "description": "Honey and honeycell on the table",
+  "filename": "23.jpg",
+  "height": 450,
+  "width": 299,
+  "price": 17.01,
+  "rating": 2
+}, {
+  "title": "Breakfast with cottage",
+  "type": "fruit",
+  "description": "Healthy breakfast with cottage cheese and strawberry",
+  "filename": "24.jpg",
+  "height": 600,
+  "width": 398,
+  "price": 14.05,
+  "rating": 1
+}, {
+  "title": "Strawberry smoothie",
+  "type": "fruit",
+  "description": "Glass of red strawberry smoothie with chia seeds, served with retro cocktail tube, fresh mint and strawberries over dark background",
+  "filename": "25.jpg",
+  "height": 600,
+  "width": 400,
+  "price": 28.86,
+  "rating": 2
+}, {
+  "title": "Strawberry and mint",
+  "type": "fruit",
+  "description": "Homemade muesli with strawberry and mint",
+  "filename": "26.jpg",
+  "height": 450,
+  "width": 299,
+  "price": 26.21,
+  "rating": 4
+}, {
+  "title": "Ricotta",
+  "type": "dairy",
+  "description": "Ricotta with berry and mint",
+  "filename": "27.jpg",
+  "height": 600,
+  "width": 398,
+  "price": 27.81,
+  "rating": 5
+}, {
+  "title": "Cuban sandwiche",
+  "type": "bakery",
+  "description": "Homemade traditional cuban sandwiches with ham pork and cheese",
+  "filename": "28.jpg",
+  "height": 450,
+  "width": 300,
+  "price": 18.5,
+  "rating": 4
+}, {
+  "title": "Granola",
+  "type": "dairy",
+  "description": "Glass jar with homemade granola and yogurt with nuts, raspberries and blackberries on wooden cutting board over white textile in day light",
+  "filename": "29.jpg",
+  "height": 450,
+  "width": 300,
+  "price": 29.97,
+  "rating": 3
+}, {
+  "title": "Smoothie with chia seeds",
+  "type": "fruit",
+  "description": "Glass of red strawberry smoothie with chia seeds, served with retro cocktail tube, fresh mint and strawberries over wooden table",
+  "filename": "30.jpg",
+  "height": 600,
+  "width": 900,
+  "price": 25.26,
+  "rating": 5
+}, {
+  "title": "Yogurt",
+  "type": "dairy",
+  "description": "Homemade yogurt with raspberry and mint",
+  "filename": "31.jpg",
+  "height": 450,
+  "width": 299,
+  "price": 27.61,
+  "rating": 4
+}, {
+  "title": "Sandwich with salad",
+  "type": "vegetable",
+  "description": "Vegan sandwich with salad, tomato and radish",
+  "filename": "32.jpg",
+  "height": 600,
+  "width": 398,
+  "price": 22.48,
+  "rating": 5
+}, {
+  "title": "Cherry",
+  "type": "fruit",
+  "description": "Cherry with sugar on old table",
+  "filename": "33.jpg",
+  "height": 600,
+  "width": 400,
+  "price": 14.35,
+  "rating": 5
+}, {
+  "title": "Raw asparagus",
+  "type": "vegetable",
+  "description": "Raw fresh asparagus salad with cheese and dressing",
+  "filename": "34.jpg",
+  "height": 600,
+  "width": 400,
+  "price": 22.97,
+  "rating": 4
+}, {
+  "title": "Corn",
+  "type": "vegetable",
+  "description": "Grilled corn on the cob with salt and butter",
+  "filename": "35.jpg",
+  "height": 450,
+  "width": 300,
+  "price": 13.55,
+  "rating": 2
+}, {
+  "title": "Vegan",
+  "type": "vegan",
+  "description": "Concept of healthy vegan eating",
+  "filename": "36.jpg",
+  "height": 600,
+  "width": 398,
+  "price": 28.96,
+  "rating": 5
+}, {
+  "title": "Fresh blueberries",
+  "type": "fruit",
+  "description": "Healthy breakfast. berry crumble with fresh blueberries, raspberries, strawberries, almond, walnuts, pecans, yogurt, and mint in ceramic plates over white wooden surface, top view",
+  "filename": "37.jpg",
+  "height": 450,
+  "width": 321,
+  "price": 21.01,
+  "rating": 4
+}, {
+  "title": "Smashed avocado",
+  "type": "fruit",
+  "description": "Vegan sandwiches with smashed avocado, tomatoes and radish. top view",
+  "filename": "38.jpg",
+  "height": 450,
+  "width": 450,
+  "price": 25.88,
+  "rating": 0
+}, {
+  "title": "Italian ciabatta",
+  "type": "bakery",
+  "description": "Italian ciabatta bread cut in slices on wooden chopping board with herbs, garlic and olives over dark grunge backdrop, top view",
+  "filename": "39.jpg",
+  "height": 450,
+  "width": 565,
+  "price": 15.18,
+  "rating": 1
+}, {
+  "title": "Rustic breakfast",
+  "type": "dairy",
+  "description": "Rustic healthy breakfast set. cooked buckwheat groats with milk and honey on dark grunge backdrop. top view, copy space",
+  "filename": "40.jpg",
+  "height": 450,
+  "width": 307,
+  "price": 21.32,
+  "rating": 0
+}, {
+  "title": "Sliced lemons",
+  "type": "fruit",
+  "description": "Heap of whole and sliced lemons and limes with mint in vintage metal grid box over old wooden table with turquoise wooden background. dark rustic style.",
+  "filename": "41.jpg",
+  "height": 600,
+  "width": 900,
+  "price": 27.14,
+  "rating": 2
+}, {
+  "title": "Plums",
+  "type": "fruit",
+  "description": "Yellow and red sweet plums",
+  "filename": "42.jpg",
+  "height": 450,
+  "width": 299,
+  "price": 19.18,
+  "rating": 1
+}, {
+  "title": "French fries",
+  "type": "bakery",
+  "description": "Homemade oven baked french fries with ketchup",
+  "filename": "43.jpg",
+  "height": 600,
+  "width": 400,
+  "price": 18.32,
+  "rating": 3
+}, {
+  "title": "Strawberries",
+  "type": "fruit",
+  "description": "Healthy breakfast set. rice cereal or porridge with fresh strawberry, apricots, almond and honey over white rustic wood backdrop, top view, \u0000",
+  "filename": "44.jpg",
+  "height": 450,
+  "width": 352,
+  "price": 15.13,
+  "rating": 3
+}, {
+  "title": "Ground beef meat burger",
+  "type": "meat",
+  "description": "Raw ground beef meat burger steak cutlets with seasoning on vintage wooden boards, black background",
+  "filename": "45.jpg",
+  "height": 450,
+  "width": 675,
+  "price": 11.73,
+  "rating": 5
+}, {
+  "title": "Tomatoes",
+  "type": "fruit",
+  "description": "Organic tomatoes made with love",
+  "filename": "46.jpg",
+  "height": 450,
+  "width": 675,
+  "price": 26.03,
+  "rating": 4
+}, {
+  "title": "Basil",
+  "type": "vegetable",
+  "description": "Concept of vegan food with basil",
+  "filename": "47.jpg",
+  "height": 450,
+  "width": 678,
+  "price": 15.19,
+  "rating": 4
+}, {
+  "title": "Fruits bouquet",
+  "type": "fruit",
+  "description": "Abstract citrus fruits bouquet on blue background",
+  "filename": "48.jpg",
+  "height": 600,
+  "width": 401,
+  "price": 18.18,
+  "rating": 1
+}, {
+  "title": "Peaches on branch",
+  "type": "fruit",
+  "description": "Peaches on branch with leaves and glasses with peach juice and limonade with ice cubes in aluminum tray over old metal table. dark rustic style. top view.",
+  "filename": "49.jpg",
+  "height": 600,
+  "width": 400,
+  "price": 25.62,
+  "rating": 3
+}];
+
+Component:
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { MarbleTestService } from './marble-test.service';
+import { Subscription } from 'rxjs';
+
+@Component({
+  selector: 'app-marble-test',
+  templateUrl: './marble-test.component.html',
+  styleUrls: ['./marble-test.component.css']
+})
+export class MarbleTestComponent implements OnInit, OnDestroy {
+  tempProductList: any;
+  constructor(private marbaleTestService: MarbleTestService) { }
+
+  isPresent: boolean = false;
+  private sub!: Subscription;
+
+  ngOnInit() {
+    this.getProductData();
+  }
+
+  getProductData() {
+    this.sub = this.marbaleTestService.getProductList().subscribe((products) => {
+      this.tempProductList = products;
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.sub) {
+      this.sub.unsubscribe();
+    }
+  }
+
+
+
+}
+Template:
+<div *ngIf = "isPresent" class="alert alert-warning">Error has occured</div>
+
+<ul class="list-group">
+    <li *ngFor="let product of tempProductList; let i = index" id="{{'product_'+i}}" class="list-group-item">{{product.title }} <span class="badge">{{product.price}}</span></li>
+    
+  </ul>
+
+
+Spec:
+
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MarbleTestComponent } from './marble-test.component';
+import { MarbleTestService } from './marble-test.service';
+import { cold, getTestScheduler } from 'jasmine-marbles';
+import { By } from '@angular/platform-browser';
+import { interval } from 'rxjs';
+import { take, map } from 'rxjs/operators';
+
+
+const mockProductList = [{
+  "title": "Brown eggs",
+  "type": "dairy",
+  "description": "Raw organic brown eggs in a basket",
+  "filename": "0.jpg",
+  "height": 600,
+  "width": 400,
+  "price": 28.1,
+  "rating": 4
+}, {
+  "title": "Sweet fresh stawberry",
+  "type": "fruit",
+  "description": "Sweet fresh stawberry on the wooden table",
+  "filename": "1.jpg",
+  "height": 450,
+  "width": 299,
+  "price": 29.45,
+  "rating": 4
+}, {
+  "title": "Asparagus",
+  "type": "vegetable",
+  "description": "Asparagus with ham on the wooden table",
+  "filename": "2.jpg",
+  "height": 450,
+  "width": 299,
+  "price": 18.95,
+  "rating": 3
+}];
+
+describe('MarbleTestComponent', () => {
+  let component: MarbleTestComponent;
+  let fixture: ComponentFixture<MarbleTestComponent>;
+  let mockList = mockProductList;
+  let testService: MarbleTestService;
+
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      declarations: [MarbleTestComponent],
+      providers: [MarbleTestService]
+    }).compileComponents();
+  });
+
+  beforeEach(() => {
+    fixture = TestBed.createComponent(MarbleTestComponent);
+    component = fixture.componentInstance;
+    testService = TestBed.inject(MarbleTestService);
+  });
+
+
+  it('[Marble - cold] - should list products after getProductList ', async () => {
+
+    let p$ = cold('(a|)', { a: mockList });
+    let productSpy = spyOn(testService, 'getProductList').and.returnValue(p$);
+    fixture.detectChanges();
+    getTestScheduler().flush();
+    fixture.detectChanges();
+    expect(productSpy).toHaveBeenCalled();
+
+    const liElement = fixture.debugElement.queryAll(By.css('.list-group-item'));
+    console.log('list item: ', liElement[0].nativeElement.innerText, mockList[0].title)
+    expect(liElement[0].nativeElement.innerText).toContain(mockList[0].title);
+    expect(liElement[0].nativeElement.innerText).toEqual(mockList[0].title + " " + mockList[0].price);
+    expect(liElement[1].nativeElement.innerText).toContain(mockList[1].title);
+    expect(liElement[2].nativeElement.innerText).toContain(mockList[2].title);
+  });
+
+
+  it('should test marble cold with rxjs internval', () => {
+    const interObs = interval(20, getTestScheduler()).pipe(
+      take(5),
+      map(x => x * 2),
+    );
+    const coldObs = cold('--a-b-c-d-(e|)', { a: 0, b: 2, c: 4, d: 6, e: 8 });
+
+    expect(interObs).toBeObservable(coldObs);
+
+  });
+
+
+
+});
+
+
+
